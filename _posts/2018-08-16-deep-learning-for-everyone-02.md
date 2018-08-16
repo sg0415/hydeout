@@ -1,4 +1,14 @@
-﻿모두의 딥러닝 02일차
+﻿---
+layout: post
+title: "모두의 딥러닝 02일차"
+categories:
+  - Deep learning
+tags:
+  - deep learning
+last_modified_at: 2018-08-16
+---
+
+모두의 딥러닝 02일차
 
 <3장> 가장 훌륭한 예측선 긋기 : 선형회귀
 ---
