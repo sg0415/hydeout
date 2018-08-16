@@ -5,7 +5,7 @@ highlighter:      rouge
 # Setup
 title:            Leina_D
 tagline:          'A Jekyll theme'
-description:      test1111
+description:      공부중'-'
 url:              https://sg0415.github.io
 baseurl:          ''
                  # the optional subpath of your site, e.g. "/blog"
@@ -16,7 +16,7 @@ baseurl:          ''
 
 author:
   name:           'K ar'
-  url:            https://twitter.com/fongandrewc
+  url:            https://github.com/sg0415
 
 paginate:         5
 # paginate_path:    '/page:num'
@@ -35,4 +35,4 @@ sidebar_home_link:  true
                                 # set this to the root of the paginate_path
                                 # to enable a separate blog link.
 github:
-  repo:             https://github.com/fongandrew/hydeout
+  repo:             https://github.com/sg0415
