@@ -2,7 +2,7 @@
 layout: post
 title: "Markup: Title with Special&nbsp;---&nbsp;Characters"
 categories:
-  - Ssibal...
+  - Ssibal
 tags:
   - html
   - markup
