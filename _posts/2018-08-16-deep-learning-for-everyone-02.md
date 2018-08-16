@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "모두의 딥러닝 02일차"
 categories:
