@@ -1,6 +1,6 @@
 ---
 layout: category
-title: Ssibal...
+title: Ssibal
 ---
 
 Another sample category page.
