@@ -7,8 +7,8 @@ title:            Leina_D
 tagline:          'A Jekyll theme'
 description:      test1111
 url:              https://sg0415.github.io
-baseurl:          
-                  # the optional subpath of your site, e.g. "/blog"
+baseurl:          ''
+                 # the optional subpath of your site, e.g. "/blog"
                   # NB: This applies to all pages in your Jekyll site.
                   # If you want to move just the blog index pages but keep
                   # other pages at root, see the paginate_path and
