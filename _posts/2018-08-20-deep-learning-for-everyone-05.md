@@ -23,7 +23,7 @@ last_modified_at: 2018-08-20
 
 퍼셉트론은 XOR 문제를 해결하지 못함
 
-![image](https://github.com/sg0415/sg0415.github.io/blob/master/_images/ㅇdeep05.png?raw=true)
+![image](https://github.com/sg0415/sg0415.github.io/blob/master/_images/deep05.png?raw=true)
 
 <7장> 다층 퍼셉트론
 ---
