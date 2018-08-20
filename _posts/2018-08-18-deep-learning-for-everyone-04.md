@@ -1,193 +1,160 @@
 ---
 layout: post
-<<<<<<< HEAD
-title: "모두의 딥러닝 05일차"
-=======
 title: "모두의 딥러닝 03일차"
->>>>>>> parent of 9efe4af... 04 study
 categories:
   - Deep learning
 tags:
   - deep learning
-last_modified_at: 2018-08-20
+last_modified_at: 2018-08-18
 ---
 
 
-<6장> 퍼셉트론
+<5장> 참 거짓 판단 장치 : 로지스틱 회귀
 ---
-**퍼셉트론**
-신경망을 이루는 기본 단위
-입력 값과 활성화 함수를 사용해 출력 값을 다음으로 넘기는 가장 작은 신경망 단위
+**로지스틱 회귀**
+참(1)과 거짓(0)사이를 구분하는 S자 형태의 선을 그어주는 작업
 
->y = ax + b (a는 기울기, b는 y절편)
->y = wx + b (w는 가중치, b는 바이어스)
+**시그모이드 함수**
+`y = 1/(1+e^ax+b^)`
+>a : 그래프의 경사도
+>b : 그래프의 좌우 이동
 
-가중합 : 입력값x와 가중치w의 곱을 모두 더한 다음 바이어스b를 더한 값
-활성화 함수 : 가중합의 결과를 놓고  0과 1을 판단하는 함수(ex. 시그모이드 함수)
+시그모이드 함수에서 어떻게 오차를 구할까?
 
-퍼셉트론은 XOR 문제를 해결하지 못함
+y값이 0과 1 사이이다.
+실제 값이 1일때 -log h 그래프
+실제 값이 0일때 -log(1-h)그래프
 
-![image](https://github.com/sg0415/sg0415.github.io/blob/master/_images/ㅇdeep05.png?raw=true)
+ -{ylogh + (1-y)log(1-h)}
+y = 0일 때, y = 1일 때에 따라 다른 그래프 사용
 
-<7장> 다층 퍼셉트론
----
-
-평면에서 직선으로 해결할 수 없다면???
-평면을 왜곡시키자ㅇㅁㅇ
-
-<i>입력층과 출력층 사이에 은닉층 만들기 !</i>
-
->퍼셉트론이 자신의 가주잋와 바이어스를 은닉층으로 보냄
->은닉층에서 모인 값이 시그모이드 함수를 이용해 최종 값으로 결과를 보냄
->노드(node) : 은닉층에 모이는 중간 정거장(n1, n2)
-
-n1 = σ(x1w11 + x2w21 + b1)
-n2 = σ(x1x12 + x2w22 + b2)
-
-yout = σ(n1w31 + n2w32 + b3)
-
-W(1) = [w11 w12
-..............w21 w22]
-W(2) = [w31
-..............w32]
-B(1) = [b1
-.............b2]
-B(2) [b3]
-
-XOR 예시
-
-| x1 | x2 | n1 | n2 | y_out | 원하는 값 |
-|--------|--------|--------|--------|--------|--------|
-|0|0|1|0|0|0|
-|0|1|1|1|1|1|
-|1|0|1|1|1|1|
-|1|1|0|1|0|0|
-
-n1 은 x1, x2에 대한 NAND 게이트
-n2 는 x1, x2에 대한 OR 게이트
-원하는 값은 n1, n2에 대한 AND 게이트
 
 예제
 ```python
+import tensorflow as tf
 import numpy as np
 
-w11 = np.arrau([-2, 2])
-w12 = np.array([2, 2])
-w2 = np.aray([1,1])
-b1 = 3
-b2 = -1
-b3 = -1
+data = [[2, 0], [4, 0], [6, 0], [8, 1], [10, 1], [12, 1], [14, 1]]
+x_data = [x_row[0] for x_row in data]
+y_data = [y_row[1] for y_row in data]
 
-#퍼셉트론 함수
-def MLP(x, w, b):
-    y = np.sum(w * x) + b
-    if y <= 0:
-        return 0
-    else:
-        return 1
+a = tf.Variable(tf.random_normal([1], dtype=tf.float64, seed=0))
+b = tf.Variable(tf.random_normal([1], dtype=tf.float64, seed=0))
 
-#NAND 게이트
-def NAND(x1, x2):
-    return MLP(np.array([x1, x2]), w11, b1)
+#시그모이드 함수 방정식(넘파이 라이브러리)
+y = 1/(1 + np.e**(a * x_data + b))
 
-#OR 게이트
-def OR(x1, x2):
-    return MLP(np.array([x1, x2]), w12, b2)
+#오차를 구하는 함수
+loss = -tf.reduce_mean(np.array(y_data) * tf.log(y) + (1 - np.array(y_data)) * tf.log(1 - y))
 
-#AND 게이트
-def AND(x1, x2):
-        return MLP(np.araay([x1, x2]), w2, b3)
+#학습률과 경사 하강법
+learning_rate = 0.5
+gradient_decent = tf.train.GradientDescentOptimizer(learning_rate).minimize(loss)
 
-#XOR 게이트
-def XOR(x1, x2):
-    return AND(NAND(x1, x2), OR(x1, x2))
+#텐서플로 구동 결과 출력
+with tf.Session() as sess:
+    sess.run(tf.global_variables_initializer())
 
-if __name__ == '__main__':
-    for x in [(0, 0), (1, 0), (0, 1), (1,1)]:
-        y = XOR(x[0], x[1])
-        print("입력 값 : " + str(x) + " 출력 값 : " + str(y))
-        
+    for i in range(60001):
+        sess.run(gradient_decent)
+        if i % 6000 == 0:
+            print("Epoch : %.f, loss = %.4f, 기울기 a = %.4f, y 절편 = %.4f" % (i, sess.run(loss), sess.run(a), sess.run(b)))
+
+
 ```
-        
+
 실행결과
 ```
-입력 값 : (0, 0) 출력 값 : 0
-입력 값 : (1, 0) 출력 값 : 1
-입력 값 : (0, 1) 출력 값 : 1
-입력 값 : (1, 1) 출력 값 : 1
+Epoch : 0, loss = 1.2676, 기울기 a = 0.1849, y 절편 = -0.4334
+Epoch : 6000, loss = 0.0152, 기울기 a = -2.9211, y 절편 = 20.2982
+Epoch : 12000, loss = 0.0081, 기울기 a = -3.5637, y 절편 = 24.8010
+Epoch : 18000, loss = 0.0055, 기울기 a = -3.9557, y 절편 = 27.5463
+Epoch : 24000, loss = 0.0041, 기울기 a = -4.2380, y 절편 = 29.5231
+Epoch : 30000, loss = 0.0033, 기울기 a = -4.4586, y 절편 = 31.0675
+Epoch : 36000, loss = 0.0028, 기울기 a = -4.6396, y 절편 = 32.3346
+Epoch : 42000, loss = 0.0024, 기울기 a = -4.7930, y 절편 = 33.4086
+Epoch : 48000, loss = 0.0021, 기울기 a = -4.9261, y 절편 = 34.3406
+Epoch : 54000, loss = 0.0019, 기울기 a = -5.0436, y 절편 = 35.1636
+Epoch : 60000, loss = 0.0017, 기울기 a = -5.1489, y 절편 = 35.9005
 ```
 
-다층 퍼셉트론으로 XOR 문제를 해결함!
+변수가 더 많아진다면?
 
-인공 <b>신경망</b>
-은닉층을 여러 개 쌓아 올려 복잡한 문제를 해결하는 과정
-뉴런이 복잡한 과정을 거쳐 사고를 낳는 사람의 신경망과 닮음
-
-<8장> 오차 역전파
----
-
-신경망 내부의 가중치는 오차 역전파 방법을 사용해 수정함
-오차 역전파는 경사 하강법의 확장 개념
-
-가중치와 바이어스를 어떻게 구할 수 있을까?
-
-<오자 역전파>
->1. 임의의 초기 가중치(w1)를 준 뒤 결과(y_out)를 계산
->2. 계산 결과와 우리가 원하는 값 사이의 오차를 구함
->3. 경사 하강법을 이용해 바로 앞 가중치를 오차가 작아지는 방향으로 업데이트
->4. 1~3 과정을 더이상 오차가 줄어들지 않을 때까지 반복
-
-오차가 작아지는 방향 = 미분값이 0에 가까워짐 = 기울기가 0이 되는 방향
->가중치에서 기울기를 빼도 값의 변화가 없을 때까지 가중치 수정작업 반복
-
-입력된 실제 값과 다층 퍼셉트론의 계산 결과를 비교하여 가중치를 역전파 방식으로 수정
-
->1. 환경 변수 지정
->	입력 값과 타깃 결괏값이 포함된 데이터셋, 학습률 포함. 활성화 함수와 가중치 선언
->2. 신경망 실행
->	초깃값을 입력하여 활성화 함수와 가중치를 거쳐 결괏값을 나오게 함
->3. 결과를 실제 값과 비교
->	오차를 측정
->4. 역전파 실행
->	출력층과 은닉층의 가중치를 수정
->5. 결과 
-
-오차 역전파의 계산법, XOR문제의 역전파 해결 스크립트는 부록에 있음
-케라스, 텐서플로 라이브러리에 구현되어있음
-몰라도 학습에 문제는 없지만 나중에 꼭 공부할것!!!
-
-<9장> 신경망에서 딥러닝으로
----
-
-1. 기울기 소실 문제와 활성화 함수
-층이 늘어나면서 기울기가 중가네 0이 되어버리는 문제 발생
-why? 시그모이드 함수의 특성떄문에
-시그모이드 함수는 미분하면 최대치가 0.3임 계속 미분할수록 기울기가 사라져간다 ㅇㅁㅇ
-
-    시그모이드, 하이퍼볼릭 탄젠트, 렐루, 소프트플러스....
-    
-    <b>렐루(ReLU)</b> : 시그모이드의 대안, 현재 가장 많이 사용됨
-    - x가 0보다 작을 때는 모든 값을 0으로, 0보다 큰 값은 x를 사용
-    - x가 0보다 클때 미분 값은 1. 기울기가 사라지지 않음!
-
-2. 고급 경사 하강법
-	경사 하강법의 단점 : 업데이트 할 때마다 전체 데이터를 미분 > 계산량 매우 많음
-	
-    <b>확률적 경사 하강법(SGD)</b>
-     - 전체 데이터가 아니라 랜덤하게 추출한 일부 데이터를 사용 
-     - 중간 결과의 진폭이 크고 불안정해 보이지만 속도가 빠름 	
- 
- <b>모멘텀</b>
- 	- 경사 하강법과 마찬가지로 매번 기울기를 구함
- 	- 오차를 수정하기 전 바로 앞 수정 값과 방향을 참고하여 같은 방향으로 일정한 비율만 수정
- 	- 이전 이동 값을 고려하여 일정 비율만큼만 다음 값을 결정(관성 효과)
-
-
-여러 가지 고급 경사 하강법이 존재함
-현재 가장 많이 쓰이는 것은 <b>아담(Adam)</b>
-
+예제
 ```python
-keras.optimizers.Adam(Ir = 0.001, b eta_1 = 0.9, beta_2 = 0.999, epsion = 1e - 08, decay = 0.0)
+import tensorflow as tf
+import numpy as np
+
+#실행할 때마다 가튼 결과를 출력하기 위한 seed값 설정
+seed = 0
+np.random.seed(seed)
+tf.set_random_seed(seed)
+
+#데이터의 값
+x_data = np.array([[2, 3], [4, 3], [6, 4], [8, 6], [10, 7], [12, 8], [14, 9]])
+y_data = np.array([0, 0, 0, 1, 1, 1, 1]).reshape(7, 1)
+
+#플레이스 홀더
+X = tf.placeholder(tf.float64, shape=[None, 2])
+Y = tf.placeholder(tf.float64, shape=[None, 1])
+
+#기울기 a와 바이어스 b의 값을 임의로 정함
+#[2, 1]의 의미 : 들어오는 값은 2개, 나가는 값은 1개
+a = tf.Variable(tf.random_uniform([2, 1], dtype=tf.float64))
+b = tf.Variable(tf.random_uniform([1], dtype=tf.float64))
+
+#y 시그모이드 함수의 방정식
+y = tf.sigmoid(tf.matmul(X, a) + b)
+
+#오차를 구하는 함수
+loss = -tf.reduce_mean(Y * tf.log(y)+(1-Y)*tf.log(1-y))
+
+#학습률 값
+learning_rate = 0.1
+
+#오차를 최소로하는 값 찾기
+gradient_decent = tf.train.GradientDescentOptimizer(learning_rate).minimize(loss)
+
+predicted = tf.cast(y > 0.5, dtype=tf.float64)
+accuracy = -tf.reduce_mean(tf.cast(tf.equal(predicted, Y), dtype=tf.float64))
+
+#학습
+with tf.Session() as sess:
+    sess.run(tf.global_variables_initializer())
+
+    for i in range(3001):
+        a_, b_, loss_, _ = sess.run([a, b, loss, gradient_decent], feed_dict = {X: x_data, Y: y_data})
+        if ( i + 1 ) % 300 == 0:
+            print("step = %d, a1 = %.4f, a2 = %.4f, b = %.4f, loss = %.4f"% (i + 1, a_[0], a_[1], b_, loss_))
+
+
+    new_x = np.array([7, 6.]).reshape(1, 2)
+    new_y = sess.run(y, feed_dict={X: new_x})
+
+    print("공부한 시간 : %d, 과외 수업 횟수 : %d" % (new_x[:, 0], new_x[:, 1]))
+    print("합격 가능성 : %6.2f %%" % (new_y * 100))
+
 ```
-다른 고급 경사 하강법과 파이썬 코드는 부록 C 참조
-나중에 공부해서 추가할것
+
+실행결과
+```
+step = 300, a1 = 0.8426, a2 = -0.5997, b = -2.3907, loss = 0.2694
+step = 600, a1 = 0.8348, a2 = -0.3166, b = -3.8630, loss = 0.1932
+step = 900, a1 = 0.7423, a2 = 0.0153, b = -4.9311, loss = 0.1510
+step = 1200, a1 = 0.6372, a2 = 0.3245, b = -5.7765, loss = 0.1235
+step = 1500, a1 = 0.5373, a2 = 0.5996, b = -6.4775, loss = 0.1042
+step = 1800, a1 = 0.4471, a2 = 0.8421, b = -7.0768, loss = 0.0900
+step = 2100, a1 = 0.3670, a2 = 1.0561, b = -7.6003, loss = 0.0791
+step = 2400, a1 = 0.2962, a2 = 1.2458, b = -8.0652, loss = 0.0705
+step = 2700, a1 = 0.2336, a2 = 1.4152, b = -8.4834, loss = 0.0636
+step = 3000, a1 = 0.1779, a2 = 1.5675, b = -8.8635, loss = 0.0579
+공부한 시간 : 7, 과외 수업 횟수 : 6
+합격 가능성 :  85.66 %
+```
+
+입력값을 통해 출력값을 구하는 함수 y
+`y = a1x1 + a2x2 + b`
+>입력값 x1, x2가 각각 가중치 a1, a2를 만난다.
+>b값을 더한 후 시그모이드 함수를 거쳐 1 or 0을 출력
+
+이걸 퍼셉트론이라고 하는데... 그건 다음장에 게속
