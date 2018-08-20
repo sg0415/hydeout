@@ -1,10 +1,6 @@
 ---
 layout: post
-<<<<<<< HEAD
 title: "모두의 딥러닝 05일차"
-=======
-title: "모두의 딥러닝 03일차"
->>>>>>> parent of 9efe4af... 04 study
 categories:
   - Deep learning
 tags:
