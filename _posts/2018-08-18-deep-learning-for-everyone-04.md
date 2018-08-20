@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "모두의 딥러닝 03일차"
+title: "모두의 딥러닝 04일차"
 categories:
   - Deep learning
 tags:
