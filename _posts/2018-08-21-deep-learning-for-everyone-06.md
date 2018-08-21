@@ -334,7 +334,8 @@ plasma와 class의 관계
 ```python
 grid = sns.FacetGrid(df, col='class')
 grid.map(plt.hist, 'plasma', bins=10)
-plt.show()```
+plt.show()
+```
 
 ![image](https://github.com/sg0415/sg0415.github.io/blob/master/_images/deep06_2.png?raw=true)
 
