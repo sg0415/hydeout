@@ -314,8 +314,93 @@ print(df[['pregnant', 'class']].groupby(['pregnant'], as_index=False).mean().sor
 `matplotlib`는 파이썬에서 그래프를 그릴 때 가장 많이 사용됨!
 `seaborn`은 `matplotlib`를 기반으로 더 정교한 그래프를 그리게 도와줌
 
+```python
+#그래프의 크기 결정
+plt.figure(figsize=(12,12))
+
+#heatmap : 각 항목 간의 상관관계를 나타내주는 함수
+#           두 항목씩 짝 지은 뒤 각각 어떤 패턴으로 변화하는지 관찰
+#           두 항목이 전혀 다른 패턴으로 변화하면 0, 비슷한 패턴으로 변할수록 1에 가까운 값 출력
+sns.heatmap(df.corr(), linewidths=0.1, vmax=0.5, cmap=plt.cm.gist_heat, linecolor='white', annot=True)
+
+plt.show()
+```
+
+![image](https://github.com/sg0415/sg0415.github.io/blob/master/_images/deep06.png?raw=true)
+
+plasma와 class의 상관관계가 가장 높다
+
+plasma와 class의 관계
+```python
+grid = sns.FacetGrid(df, col='class')
+grid.map(plt.hist, 'plasma', bins=10)
+plt.show()```
+
+![image](https://github.com/sg0415/sg0415.github.io/blob/master/_images/deep06_2.png?raw=true)
+
+당뇨병 환자(class=1)일 때 plasma 항목의 수치가 150이상인 경우가 많다
+<u>결과에 미치는 영향이 큰 항목을 발견하는 것이 데이터 전처리 과정의 한 예</u>
+
+seed 값 설정
+일정한 결과 값을 얻기 위해 넘ㄴ파이 seed값과 텐서플로 seed 값을 모두 설정해야함
+
+예제
+```python
+from keras.models import Sequential
+from keras.layers import Dense
+import numpy
+import tensorflow as tf
 
 
+#seed 값 생성
+seed = 0
+numpy.random.seed(seed)
+tf.set_random_seed(seed)
+
+dataset = numpy.loadtxt("../dataset/pima-indians-diabetes.csv", delimiter=",")
+X = dataset[:,0:8]
+Y = dataset[:,8]
+
+#모델 설정
+model = Sequential()
+model.add(Dense(12, input_dim=8, activation='relu'))
+model.add(Dense(8, activation='relu'))
+model.add(Dense(1, activation='sigmoid'))
+
+#모델 컴파일
+model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+
+#모델 실행
+model.fit(X, Y, epochs=200, batch_size=10)
+
+#결과 출력
+print("\n Accuracy: %.4f" %(model.evaluate(X, Y)[1]))
+```
+
+실행결과
+```
+Epoch 1/200
+
+ 10/768 [..............................] - ETA: 16s - loss: 6.0117 - acc: 0.4000
+740/768 [===========================>..] - ETA: 0s - loss: 2.4714 - acc: 0.5149 
+768/768 [==============================] - 0s 354us/step - loss: 2.4329 - acc: 0.5143
+Epoch 2/200
+
+ 10/768 [..............................] - ETA: 0s - loss: 0.9666 - acc: 0.4000
+768/768 [==============================] - 0s 65us/step - loss: 0.9142 - acc: 0.6393
+
+(중략)
+Epoch 200/200
+
+ 10/768 [..............................] - ETA: 0s - loss: 0.3972 - acc: 0.8000
+670/768 [=========================>....] - ETA: 0s - loss: 0.4598 - acc: 0.7761
+768/768 [==============================] - 0s 76us/step - loss: 0.4636 - acc: 0.7721
+
+ 32/768 [>.............................] - ETA: 0s
+768/768 [==============================] - 0s 50us/step
+
+ Accuracy: 0.7839
+ 
 ㅇㄹㄴㅇㄹㄴ
 ㄹ
 ㄴㄹ
